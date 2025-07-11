@@ -1,0 +1,77 @@
+<div class="max-h-screen overflow-y-auto bg-gray-100 p-6 space-y-4">
+  <h2 class="text-xl font-bold mb-6 text-gray-800">Editar Venta</h2>
+
+  <form (ngSubmit)="guardar()" class="space-y-6">
+
+    <div>
+      <label class="block mb-1 font-medium">Comprador:</label>
+      <input type="text" [(ngModel)]="venta.comprador" name="comprador" required
+        class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+    </div>
+
+    <div>
+      <label class="block mb-1 font-medium">Modelo:</label>
+      <input type="text" [(ngModel)]="venta.modelo" name="modelo" required
+        class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label class="block mb-1 font-medium">Precio Venta:</label>
+        <input type="number" [(ngModel)]="venta.precioVenta" name="precioVenta" required
+          class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      </div>
+
+      <div>
+        <label class="block mb-1 font-medium">Precio Compra:</label>
+        <input type="number" [(ngModel)]="venta.precioCompra" name="precioCompra" required
+          class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      </div>
+    </div>
+
+    <div>
+      <label class="block mb-1 font-medium">Forma de pago:</label>
+      <select [(ngModel)]="venta.formaPago" name="formaPago"
+        class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <option value="Efectivo">Efectivo</option>
+        <option value="Tarjeta">Tarjeta</option>
+        <option value="Transferencia">Transferencia</option>
+        <option value="Cuotas">Cuotas</option>
+      </select>
+    </div>
+
+    <div>
+      <label class="block mb-1 font-medium">Fecha:</label>
+      <input type="date" [(ngModel)]="venta.fecha" name="fecha" required
+        class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+    </div>
+
+    <div>
+      <label class="block mb-1 font-medium">Plataforma:</label>
+      <select [(ngModel)]="venta.plataforma" name="plataforma"
+        class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <option value="Facebook">Facebook</option>
+        <option value="Instagram">Instagram</option>
+        <option value="WhatsApp">WhatsApp</option>
+        <option value="Otro">Otro</option>
+      </select>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <input type="checkbox" [(ngModel)]="venta.confirmada" name="confirmada"
+        class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
+      <label class="text-sm font-medium">Confirmada</label>
+    </div>
+
+    <div class="flex justify-end gap-3 pt-4">
+      <button type="button" (click)="cancelar()"
+        class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100 transition">
+        Cancelar
+      </button>
+      <button type="submit" (click)="guardar()"
+        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition font-semibold">
+        Guardar
+      </button>
+    </div>
+  </form>
+</div>

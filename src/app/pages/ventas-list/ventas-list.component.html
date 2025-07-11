@@ -1,0 +1,154 @@
+<div class="p-6 m-6 space-y-4 max-w-[1400px] mx-auto bg-gray-200">
+
+  <p class="flex items-center justify-center text-xl">Filtros</p>
+
+  <!-- Filtros -->
+  <div class="flex flex-wrap justify-center items-center gap-4 mb-2 p-4">
+
+    <div class="w-[200px]">
+      <label class="text-sm font-medium">Desde:</label>
+      <input type="date" [(ngModel)]="fechaDesde" (change)="aplicarFiltro()" class="w-full border rounded px-3 py-1 bg-gray-100" />
+    </div>
+
+    <div class="w-[200px]">
+      <label class="text-sm font-medium">Hasta:</label>
+      <input type="date" [(ngModel)]="fechaHasta" (change)="aplicarFiltro()" class="w-full border rounded px-3 py-1 bg-gray-100" />
+    </div>
+
+    <div class="w-[200px]">
+      <label class="text-sm font-medium">Plataforma:</label>
+      <select [(ngModel)]="plataformaFiltro" (change)="aplicarFiltro()" class="w-full border rounded px-3 py-1 bg-gray-100 cursor-pointer">
+        <option value="">Todas</option>
+        <option value="Facebook">Facebook</option>
+        <option value="Instagram">Instagram</option>
+        <option value="WhatsApp">WhatsApp</option>
+        <option value="Otro">Otro</option>
+      </select>
+    </div>
+
+    <div class="w-[200px]">
+      <label class="text-sm font-medium">Forma de pago:</label>
+      <select [(ngModel)]="pagoFiltro" (change)="aplicarFiltro()" class="w-full border rounded px-3 py-1 bg-gray-100 cursor-pointer">
+        <option value="">Todas</option>
+        <option value="Efectivo">Efectivo</option>
+        <option value="Tarjeta">Tarjeta</option>
+        <option value="Transferencia">Transferencia</option>
+        <option value="Cuotas">Cuotas</option>
+      </select>
+    </div>
+
+    <div class="w-[200px]">
+      <label class="text-sm text font-medium">Confirmada:</label>
+      <select [(ngModel)]="confirmadaFiltro" (change)="aplicarFiltro()" class="w-full border rounded px-3 py-1 bg-gray-100 cursor-pointer">
+        <option value="">Todas</option>
+        <option value="true">Sí</option>
+        <option value="false">No</option>
+      </select>
+    </div>
+
+    <div class="max-w-[250px]">
+      <label class="text-sm font-medium">Modelo:</label>
+      <input type="text" [(ngModel)]="modeloFiltro" (input)="aplicarFiltro()" placeholder="Buscar modelo..."
+        class="w-full border rounded px-3 py-1 bg-gray-100" />
+    </div>
+
+    <div class="max-w-[250px]">
+      <label class="text-sm font-medium">Comprador:</label>
+      <input type="text" [(ngModel)]="compradorFiltro" (input)="aplicarFiltro()" placeholder="Buscar comprador..."
+        class="w-full border rounded px-3 py-1 bg-gray-100" />
+    </div>
+
+    <div class="max-w-[250px] mt-6">
+    <button (click)="limpiarFiltros()"
+    class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-3 py-2 text-sm rounded cursor-pointer">
+      Limpiar filtros
+    </button>
+    </div>
+  </div>
+
+  <div class="divider w-full border-t border-gray-400"></div>
+
+  <div class="flex items-center justify-center mt-6 gap-2">
+    <button (click)="abrirFormulario()"
+      class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded cursor-pointer">
+      Registrar nueva venta
+    </button>
+  </div>
+
+  <!-- Tabla -->
+  <div class="flex items-center justify-end gap-2">
+    <p class="text-sm text-gray-600">
+      Mostrando {{ ventasPaginadas.length }} de {{ ventas.length }} ventas
+    </p>
+
+    <button class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-1 text-sm rounded cursor-pointer"
+      (click)="cambiarPagina(currentPage - 1)" [disabled]="currentPage === 1">
+      < </button>
+
+        <span class="px-2">Página {{ currentPage }} de {{ totalPaginas }}</span>
+
+        <button class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-1 text-sm rounded cursor-pointer"
+          (click)="cambiarPagina(currentPage + 1)" [disabled]="currentPage === totalPaginas">
+          >
+        </button>
+  </div>
+
+  <div class="overflow-x-auto rounded-lg shadow ring-1 ring-black ring-opacity-5">
+
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="table-header">Comprador</th>
+          <th class="table-header">Modelo</th>
+          <th class="table-header">Venta</th>
+          <th class="table-header">Costo</th>
+          <th class="table-header">Ganancia</th>
+          <th class="table-header">Pago</th>
+          <th class="table-header">Plataforma</th>
+          <th class="table-header">Fecha</th>
+          <th class="table-header">Confirmada</th>
+          <th class="table-header">Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody class="bg-white divide-y divide-gray-200">
+        <tr *ngFor="let v of ventasPaginadas" class="hover:bg-gray-50">
+          <td class="table-data">{{ v.comprador }}</td>
+          <td class="table-data">{{ v.modelo }}</td>
+          <td class="table-data text-blue-600 font-semibold">${{ v.precioVenta }}</td>
+          <td class="table-data text-red-600">${{ v.precioCompra }}</td>
+          <td class="table-data text-green-600 font-semibold">+${{ calcularMargen(v) }}</td>
+          <td class="table-data">{{ v.formaPago }}</td>
+          <td *ngIf="v.plataforma === 'Facebook'" class="table-data text-blue-600">Facebook</td>
+          <td *ngIf="v.plataforma === 'Instagram'" class="table-data text-violet-600">Instagram</td>
+          <td *ngIf="v.plataforma === 'WhatsApp'" class="table-data text-green-600">WhatsApp</td>
+          <td *ngIf="v.plataforma === 'Otro'" class="table-data text-gray-600">Otro</td>
+          <td class="table-data">{{ formatearFecha(v.fecha) }}</td>
+          <td class="table-data text-center ">
+            <span [ngClass]="v.confirmada ? 'text-green-600 font-bold' : 'text-red-600 font-bold'">
+              {{ v.confirmada ? 'Sí' : 'No' }}
+            </span>
+          </td>
+          <td class="px-4 py-2 text-sm space-x-2">
+            <button
+              (click)="editarVenta(v)"
+              class="bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded-full cursor-pointer"
+              title="Editar">
+              <lucide-icon [img]="Edit" class="my-icon w-5 h-5"></lucide-icon>
+            </button>
+          
+            <button
+              (click)="eliminarVenta(v.id!)"
+              class="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full cursor-pointer"
+              title="Eliminar">
+              <lucide-icon [img]="Trash2" class="my-icon w-5 h-5"></lucide-icon>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+
+
+</div>

@@ -1,0 +1,21 @@
+<mat-toolbar class="bg-blue-600 text-white shadow-md px-6 py-3 flex justify-center align-center">
+    <a
+      mat-button
+      routerLink="/ventas"
+      routerLinkActive="underline"
+      class="text-black font-bold hover:text-gray-200 mx-2"
+      >Ventas</a
+    >
+    <a
+      mat-button
+      routerLink="/dashboard"
+      routerLinkActive="underline"
+      class="text-black font-bold hover:text-gray-200 mx-2"
+      >Estadísticas</a
+    >
+
+    <div class="flex">
+      <button (click)="logout()" class="text-sm text-red-600 hover:underline cursor-pointer">Cerrar sesión</button>
+    </div>
+
+  </mat-toolbar>

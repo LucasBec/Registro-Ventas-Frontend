@@ -1,0 +1,100 @@
+<div class="p-6 m-6 space-y-6 max-w-[1400px] mx-auto bg-gray-200">
+  <!-- Filtros -->
+  <div class="flex flex-wrap justify-center items-center gap-4 mb-2 p-4">
+    <div class="w-[200px]">
+      <label class="block mb-1 text-sm font-medium">Desde:</label>
+      <input type="date" [(ngModel)]="fechaDesde" (change)="aplicarFiltro()"
+        class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100" />
+    </div>
+
+    <div class="w-[200px]">
+      <label class="block mb-1 text-sm font-medium">Hasta:</label>
+      <input type="date" [(ngModel)]="fechaHasta" (change)="aplicarFiltro()"
+        class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100" />
+    </div>
+
+    <div class="w-[200px]">
+      <label class="block mb-1 text-sm font-medium">Plataforma:</label>
+      <select [(ngModel)]="plataformaFiltro" (change)="aplicarFiltro()"
+        class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer bg-gray-100">
+        <option value="">Todas</option>
+        <option value="Facebook">Facebook</option>
+        <option value="Instagram">Instagram</option>
+        <option value="WhatsApp">WhatsApp</option>
+        <option value="Otro">Otro</option>
+      </select>
+    </div>
+
+    <div class="w-[200px]">
+      <label class="block mb-1 text-sm font-medium">Forma de pago:</label>
+      <select [(ngModel)]="pagoFiltro" (change)="aplicarFiltro()"
+        class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer bg-gray-100">
+        <option value="">Todas</option>
+        <option value="Efectivo">Efectivo</option>
+        <option value="Tarjeta">Tarjeta</option>
+        <option value="Transferencia">Transferencia</option>
+        <option value="Cuotas">Cuotas</option>
+      </select>
+    </div>
+
+    <div class="w-[200px]">
+      <label class="block mb-1 text-sm font-medium">Confirmada:</label>
+      <select [(ngModel)]="confirmadaFiltro" (change)="aplicarFiltro()"
+        class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer bg-gray-100">
+        <option value="">Todas</option>
+        <option value="true">Sí</option>
+        <option value="false">No</option>
+      </select>
+    </div>
+
+    <div class="flex items-end max-w-[200px] cursor-pointer">
+      <button (click)="limpiarFiltros()"
+        class="px-3 py-2 mt-6 text-sm rounded cursor-pointer bg-gray-300 hover:bg-gray-400 text-gray-800">
+        Limpiar filtros
+      </button>
+    </div>
+  </div>
+
+  <!-- Totales -->
+  <div class="flex justify-center p-6 rounded-md shadow text-gray-800 bg-gray-100">
+    <div class="max-w-xs w-full text-center">
+      <p class="text-lg font-semibold mb-2">
+        <strong>Total de ventas:</strong> {{ totalVentas }}
+      </p>
+      <p class="text-lg">
+        <strong>Ganancia total: </strong> <span class="text-green-600 font-semibold">${{ gananciaTotal }}</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- Estadísticas y gráficos -->
+  <div class="flex flex-wrap justify-center items-center max-w-[1400px] gap-6">
+    <div class="bg-gray-100 p-4 rounded-md shadow w-[400px]">
+      <h3 class="text-xl font-semibold mb-3">Ventas por Plataforma</h3>
+      <ul class="space-y-1 text-gray-700 mb-4">
+        <li *ngFor="let plataforma of objectKeys(porPlataforma)">
+          <span class="font-medium">{{ plataforma }}:</span> {{ porPlataforma[plataforma] }}
+        </li>
+      </ul>
+      <canvas baseChart
+        [data]="plataformaChartData"
+        [type]="'doughnut'"
+        [options]="chartOptions">
+      </canvas>
+    </div>
+
+    <div class="bg-gray-100 p-4 rounded-md shadow w-[400px]">
+      <h3 class="text-xl font-semibold mb-3">Ventas por Forma de Pago</h3>
+      <ul class="space-y-1 text-gray-700 mb-4">
+        <li *ngFor="let pago of objectKeys(porPago)">
+          <span class="font-medium">{{ pago }}:</span> {{ porPago[pago] }}
+        </li>
+      </ul>
+      <canvas baseChart
+        [data]="pagoChartData"
+        [type]="'doughnut'"
+        [options]="chartOptions">
+      </canvas>
+    </div>
+  </div>
+</div>
