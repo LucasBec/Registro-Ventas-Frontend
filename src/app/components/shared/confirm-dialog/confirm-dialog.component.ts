@@ -12,8 +12,8 @@ import { CommonModule } from '@angular/common';
       <h2 class="text-lg font-semibold mb-4">{{ data.titulo }}</h2>
       <p class="mb-6">{{ data.mensaje }}</p>
       <div class="flex justify-center gap-4">
+        <button mat-raised-button color="warn" (click)="dialogRef.close(true)">Confirmar</button>
         <button mat-button (click)="dialogRef.close(false)">Cancelar</button>
-        <button mat-raised-button color="warn" (click)="dialogRef.close(true)">Eliminar</button>
       </div>
     </div>
   `,

@@ -5,7 +5,8 @@
 
     <div>
       <label class="block">Comprador:</label>
-      <input type="text" [(ngModel)]="venta.comprador" name="comprador" required #comprador="ngModel" class="input w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      <input type="text" [(ngModel)]="venta.comprador" name="comprador" required #comprador="ngModel"
+        class="input w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
       <p class="text-red-500 text-sm" *ngIf="comprador.invalid && comprador.touched">
         El nombre del comprador es obligatorio.
       </p>
@@ -13,7 +14,8 @@
 
     <div>
       <label class="block text-sm font-medium text-gray-700 mb-1">Modelo</label>
-      <input type="text" [(ngModel)]="venta.modelo" name="modelo" required #modelo="ngModel" class="input w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      <input type="text" [(ngModel)]="venta.modelo" name="modelo" required #modelo="ngModel"
+        class="input w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
       <p class="text-red-500 text-sm" *ngIf="modelo.invalid && modelo.touched">
         El modelo es obligatorio.
       </p>
@@ -22,7 +24,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Precio Venta</label>
-        <input type="number" [(ngModel)]="venta.precioVenta" name="precioVenta" required min="1" #precioVenta="ngModel"
+        <input type="number" [(ngModel)]="venta.precioVenta" name="precioVenta" (change)="generarCuotas()" required min="1" #precioVenta="ngModel"
           class="input w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
         <p class="text-red-500 text-sm" *ngIf="precioVenta.invalid && precioVenta.touched">
           El precio debe ser mayor a 0.
@@ -30,7 +32,8 @@
       </div>
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Precio Compra</label>
-        <input type="number" [(ngModel)]="venta.precioCompra" name="precioCompra" required min="1" #precioCompra="ngModel"
+        <input type="number" [(ngModel)]="venta.precioCompra"  name="precioCompra" required min="1"
+          #precioCompra="ngModel"
           class="input w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
         <p class="text-red-500 text-sm" *ngIf="precioCompra.invalid && precioCompra.touched">
           El precio debe ser mayor a 0.
@@ -49,9 +52,20 @@
       </select>
     </div>
 
+
+    <div *ngIf="venta.formaPago === 'Cuotas'">
+      <label class="block text-sm font-medium text-gray-700 mb-1">Cantidad de cuotas</label>
+      <select [(ngModel)]="cantidadCuotas" name="cantidadCuotas" (change)="generarCuotas()"
+        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <option *ngFor="let n of cuotasPosibles" [value]="n">{{ n }}</option>
+      </select>
+    </div>
+
+
     <div>
       <label class="block text-sm font-medium text-gray-700 mb-1">Fecha</label>
-      <input type="date" [(ngModel)]="venta.fecha" name="fecha" required #fecha="ngModel" class="input w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      <input type="date" [(ngModel)]="venta.fecha" name="fecha" (change)="generarCuotas()" required #fecha="ngModel"
+        class="input w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
       <p class="text-red-500 text-sm" *ngIf="fecha.invalid && fecha.touched">
         La fecha es obligatoria.
       </p>
@@ -77,7 +91,8 @@
     <div class="flex justify-end gap-2 pt-2">
       <button type="button" (click)="dialogRef.close()"
         class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100 transition">Cancelar</button>
-      <button mat-raised-button color="primary" type="submit" [disabled]="formulario.invalid" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition font-semibold">
+      <button mat-raised-button color="primary" type="submit" [disabled]="formulario.invalid"
+        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition font-semibold">
         Guardar
       </button>
     </div>

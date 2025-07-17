@@ -2,6 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { ICuota } from '../models/cuota.model';
+import { IDeudor } from '../models/deudores.model';
+
+
 
 export interface Venta {
   id?: number;
@@ -13,6 +17,7 @@ export interface Venta {
   fecha: string;
   plataforma: string;
   confirmada: boolean;
+  cuotas?: ICuota[]; 
 }
 
 @Injectable({
@@ -41,6 +46,15 @@ export class VentasService {
       .pipe(catchError(this.handleError));
   }
 
+  actualizarCuotas(ventaId: number, cuotas: ICuota[]): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${ventaId}/cuotas`, cuotas)
+      .pipe(catchError(this.handleError));
+  }
+
+  obtenerDeudores(): Observable<IDeudor[]> {
+    return this.http.get<IDeudor[]>(`${this.apiUrl}/deudores`);
+  }
+  
   eliminarVenta(id: number): Observable<void> {
     return this.http
       .delete<void>(`${this.apiUrl}/${id}`)

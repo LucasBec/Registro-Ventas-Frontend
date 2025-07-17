@@ -1,0 +1,36 @@
+<div class="p-6 m-6 space-y-6 max-w-[1400px] mx-auto bg-gray-100 rounded-xl shadow-inner">
+
+    <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">Lista de Deudores</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div *ngFor="let deudor of deudores" class="bg-white shadow-lg rounded-2xl p-6 border border-gray-300">
+
+            <!-- Encabezado del deudor -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
+                <h3 class="text-xl font-semibold text-gray-800">{{ deudor.comprador }}</h3>
+                <span class="text-sm text-gray-500 italic mt-1 sm:mt-0">{{ deudor.modelo }}</span>
+            </div>
+
+            <!-- Total de deuda -->
+            <p class="text-red-600 text-base font-semibold mb-4">
+                Total deuda: {{ formatMonto(deudor.totalDeuda) }}
+            </p>
+
+            <!-- Lista de cuotas impagas -->
+            <div>
+                <p class="font-bold text-gray-700 mb-2">Cuotas adeudadas:</p>
+                <ul class="space-y-2">
+                    <li *ngFor="let cuota of deudor.cuotasImpagas"
+                        class="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-600 font-medium">Cuota #{{ cuota.numeroCuota }}</span>
+                            <span class="text-sm text-gray-700">Fecha de pago: {{ cuota.fechaPago }}</span>
+                            <span class="text-sm font-semibold text-gray-800">Monto: {{ formatMonto(cuota.monto) }}</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</div>

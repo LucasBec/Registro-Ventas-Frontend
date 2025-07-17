@@ -1,0 +1,55 @@
+<div class="flex flex-col gap-2 p-4 max-h-[calc(100vh-100px)] overflow-y-auto">
+  <h2 class="text-xl font-bold mb-4 text-center">Cuotas de la Venta #{{ venta.id }}</h2>
+
+  <div *ngIf="cargando" class="text-center text-gray-500">
+    Cargando cuotas...
+  </div>
+
+  <div *ngIf="!cargando && cuotas.length === 0" class="text-center text-gray-500">
+    No hay cuotas registradas para esta venta.
+  </div>
+
+  <div *ngIf="!cargando && cuotas.length > 0" class="space-y-2">
+    <div *ngFor="let c of cuotas" class="bg-gray-200 rounded p-3 flex items-center justify-center rounded-[30px]">
+      <div class="flex flex-col gap-2">
+        <p class="font-semibold">Cuota {{ c.numeroCuota }}</p>
+        <p><strong>Monto:</strong> ${{ c.monto }}</p>
+        <div class="flex justify-center items-center gap-2">
+          <p><strong>Fecha de pago:</strong></p>
+          <input
+            type="date"
+            [(ngModel)]="c.fechaPago"
+            (change)="actualizarFechaPago(c)"
+          class="border border-gray-300 rounded px-2 py-1 bg-gray-100"
+        />
+        </div>
+        <p>
+          Estado:
+          <span [class.text-green-600]="c.pagada" [class.text-red-600]="!c.pagada">
+            {{ c.pagada ? 'Pagada' : 'Pendiente' }}
+          </span>
+        </p>
+
+        <button 
+        *ngIf="!c.pagada" 
+        (click)="confirmarPago(c)" 
+        [hidden]="!esConfirmable(c) || c.pagada"
+          class="px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600 cursor-pointer">
+          Confirmar pago
+        </button>
+
+        <button 
+        *ngIf="c.pagada" 
+        (click)="desconfirmarPago(c)"
+          class="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 cursor-pointer">
+          Desconfirmar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <button (click)="agregarCuota()"
+    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded mt-4 max-w-xs self-center cursor-pointer">
+    Agregar Cuota
+  </button>
+</div>

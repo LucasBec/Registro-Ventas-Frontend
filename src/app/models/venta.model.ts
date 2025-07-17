@@ -1,4 +1,6 @@
-export interface Venta {
+import { ICuota } from "./cuota.model";
+
+export interface IVenta {
     id?: number; 
     comprador: string;
     modelo: string;
@@ -8,4 +10,5 @@ export interface Venta {
     fecha: string;
     plataforma: 'Facebook' | 'Instagram' | 'WhatsApp' | 'Otro';
     confirmada: boolean;
+    cuotas?: ICuota[];
 }
