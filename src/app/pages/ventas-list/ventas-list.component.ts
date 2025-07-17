@@ -10,11 +10,18 @@ import { ConfirmDialogComponent } from '../../components/shared/confirm-dialog/c
 import { EditarVentaDialogComponent } from '../../components/ventas/editar-venta-dialog/editar-venta-dialog.component';
 import { VentasFormComponent } from '../../components/ventas/ventas-form/ventas-form.component';
 import { LucideAngularModule, Edit, Trash2 } from 'lucide-angular';
+import { CuotasComponent } from '../../components/cuotas/cuotas.component';
 
 @Component({
   selector: 'app-ventas-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule, MatDialogModule, MatSnackBarModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    LucideAngularModule,
+    MatDialogModule,
+    MatSnackBarModule,
+  ],
   templateUrl: './ventas-list.component.html',
 })
 export class VentasListComponent implements OnInit {
@@ -74,26 +81,69 @@ export class VentasListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result: Venta | undefined) => {
       if (result && result.id) {
-        this.ventasService.actualizarVenta(result.id, result).subscribe(() => {
-          this.recargarVentas();
-        });
+        const { cuotas, ...ventaSinCuotas } = result;
+
+        this.ventasService
+          .actualizarVenta(result.id, ventaSinCuotas)
+          .subscribe({
+            next: () => {
+              if (cuotas && cuotas.length > 0) {
+                this.ventasService
+                  .actualizarCuotas(result.id!, cuotas)
+                  .subscribe({
+                    next: () => {
+                      this.snackBar.open(
+                        'Venta actualizada correctamente',
+                        'Cerrar',
+                        {
+                          duration: 3000,
+                        }
+                      );
+                      this.recargarVentas();
+                    },
+                    error: (err) => {
+                      this.snackBar.open(
+                        'Venta actualizada pero hubo error con las cuotas',
+                        'Cerrar',
+                        {
+                          duration: 3000,
+                        }
+                      );
+                      this.recargarVentas();
+                    },
+                  });
+              } else {
+                this.snackBar.open(
+                  'Venta actualizada correctamente',
+                  'Cerrar',
+                  {
+                    duration: 3000,
+                  }
+                );
+                this.recargarVentas();
+              }
+            },
+            error: (err) => {
+              this.snackBar.open('Error al actualizar la venta', 'Cerrar', {
+                duration: 3000,
+              });
+            },
+          });
       }
     });
   }
 
   guardarEdicion() {
     if (!this.editandoVenta || !this.editandoVenta.id) return;
-  
-    this.ventasService.actualizarVenta(this.editandoVenta.id, this.editandoVenta).subscribe({
-      next: () => {
-        this.editandoVenta = null;
-        this.recargarVentas();
-      },
-      error: (err) => {
-        console.error('Error al actualizar', err);
-        this.snackBar.open('Error al actualizar la venta', 'Cerrar', { duration: 3000 });
-      }
-    });
+
+    this.ventasService
+      .actualizarVenta(this.editandoVenta.id, this.editandoVenta)
+      .subscribe({
+        next: () => {
+          this.editandoVenta = null;
+          this.recargarVentas();
+        },
+      });
   }
 
   eliminarVenta(id: number) {
@@ -102,22 +152,36 @@ export class VentasListComponent implements OnInit {
       data: {
         titulo: 'Eliminar Venta',
         mensaje: '¿Estás seguro de que deseas eliminar esta venta?',
-      }
+      },
     });
-  
-    dialogRef.afterClosed().subscribe(result => {
+
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.ventasService.eliminarVenta(id).subscribe({
           next: () => {
-            this.snackBar.open('Venta eliminada con éxito', 'Cerrar', { duration: 3000 });
+            this.snackBar.open('Venta eliminada con éxito', 'Cerrar', {
+              duration: 3000,
+            });
             this.recargarVentas();
           },
           error: (err) => {
-            console.error('Error al eliminar', err);
-            this.snackBar.open('Error al eliminar la venta', 'Cerrar', { duration: 3000 });
-          }
+            this.snackBar.open('Error al eliminar la venta', 'Cerrar', {
+              duration: 3000,
+            });
+          },
         });
       }
+    });
+  }
+
+  verCuotas(venta: Venta) {
+    const dialogRef = this.dialog.open(CuotasComponent, {
+      width: '600px',
+      data: venta,
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.recargarVentas();
     });
   }
 

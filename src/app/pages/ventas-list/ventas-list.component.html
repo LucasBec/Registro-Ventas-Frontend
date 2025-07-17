@@ -118,7 +118,10 @@
           <td class="table-data text-blue-600 font-semibold">${{ v.precioVenta }}</td>
           <td class="table-data text-red-600">${{ v.precioCompra }}</td>
           <td class="table-data text-green-600 font-semibold">+${{ calcularMargen(v) }}</td>
-          <td class="table-data">{{ v.formaPago }}</td>
+          <td class="table-data" *ngIf="v.formaPago === 'Cuotas'"
+          (click)="verCuotas(v)"
+          class="table-data cursor-pointer text-blue-600 font-semibold underline hover:text-blue-500">{{ `${v.cuotas?.length} ${v.formaPago} ` }}</td>
+          <td *ngIf="v.formaPago !== 'Cuotas'" class="table-data">{{ v.formaPago }}</td>  
           <td *ngIf="v.plataforma === 'Facebook'" class="table-data text-blue-600">Facebook</td>
           <td *ngIf="v.plataforma === 'Instagram'" class="table-data text-violet-600">Instagram</td>
           <td *ngIf="v.plataforma === 'WhatsApp'" class="table-data text-green-600">WhatsApp</td>
@@ -129,7 +132,7 @@
               {{ v.confirmada ? 'Sí' : 'No' }}
             </span>
           </td>
-          <td class="px-4 py-2 text-sm space-x-2">
+          <td class="table-data flex items-center justify-center gap-2">
             <button
               (click)="editarVenta(v)"
               class="bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded-full cursor-pointer"

@@ -5,7 +5,6 @@ import { VentasService, Venta } from '../../../services/ventas.service';
 import { MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
-
 @Component({
   selector: 'app-ventas-form',
   standalone: true,
@@ -21,39 +20,87 @@ export class VentasFormComponent {
     formaPago: 'Efectivo',
     fecha: new Date().toISOString().split('T')[0],
     plataforma: 'WhatsApp',
-    confirmada: false
+    confirmada: false,
+    cuotas: [],
   };
+
+  cuotasPosibles = Array.from({ length: 12 }, (_, i) => i + 1);
+  cantidadCuotas: number = 1;
 
   constructor(
     private ventasService: VentasService,
     public dialogRef: MatDialogRef<VentasFormComponent>,
-    private snackBar: MatSnackBar) {}
+    private snackBar: MatSnackBar
+  ) {}
 
-    guardar() {
-      this.ventasService.crearVenta(this.venta).subscribe({
-        next: () => {
-          this.snackBar.open('Venta registrada con éxito', 'Cerrar', {
-            duration: 3000,
-            panelClass: ['bg-green-600', 'text-white']
-          });
+  onFormaPagoChange() {
+    if (this.venta.formaPago !== 'Cuotas') {
+      this.venta.cuotas = [];
+    }
+  }
+
+  generarCuotas() {
+    const cuotas = [];
+    const fechaInicial = new Date(this.venta.fecha);
+    const monto = parseFloat(
+      (this.venta.precioVenta / this.cantidadCuotas).toFixed(2)
+    );
+
+    for (let i = 1; i <= this.cantidadCuotas; i++) {
+      const fechaPago = new Date(fechaInicial);
+      fechaPago.setMonth(fechaInicial.getMonth() + (i - 1));
+
+      cuotas.push({
+        numeroCuota: i,
+        monto,
+        fechaPago: fechaPago.toISOString().split('T')[0],
+        pagada: false,
+        ventaId: this.venta.id!,
+      });
+    }
+
+    this.venta.cuotas = cuotas;
+  }
+
+  guardar() {
+    if (this.venta.formaPago === 'Cuotas') {
+      this.generarCuotas();
+    } else {
+      this.venta.cuotas = [];
+    }
+
+    const ventaFinal = { ...this.venta };
+
+    this.ventasService.crearVenta(ventaFinal).subscribe({
+      next: () => {
+        this.snackBar.open('Venta registrada con éxito', 'Cerrar', {
+          duration: 3000,
+          panelClass: ['bg-green-600', 'text-white'],
+        });
         this.dialogRef.close(true);
-        this.venta = {
-          comprador: '',
-          modelo: '',
-          precioVenta: 0,
-          precioCompra: 0,
-          formaPago: 'Efectivo',
-          fecha: new Date().toISOString().split('T')[0],
-          plataforma: 'WhatsApp',
-          confirmada: false
-        };
+        this.resetFormulario();
       },
-      error: err => {
+      error: (err) => {
         this.snackBar.open(err.message, 'Cerrar', {
           duration: 4000,
-          panelClass: ['bg-red-600', 'text-white']
+          panelClass: ['bg-red-600', 'text-white'],
         });
-      }
+      },
     });
+  }
+
+  resetFormulario() {
+    this.venta = {
+      comprador: '',
+      modelo: '',
+      precioVenta: 0,
+      precioCompra: 0,
+      formaPago: 'Efectivo',
+      fecha: new Date().toISOString().split('T')[0],
+      plataforma: 'WhatsApp',
+      confirmada: false,
+      cuotas: [],
+    };
+    this.cantidadCuotas = 1;
   }
 }
