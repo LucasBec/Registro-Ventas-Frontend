@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { VentasService, Venta } from '../../../services/ventas.service';
 import { MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { CustomSnackComponent } from '../../../shared/custom-snack/custom-snack.component';
 
 @Component({
   selector: 'app-ventas-form',
@@ -20,7 +21,7 @@ export class VentasFormComponent {
     formaPago: 'Efectivo',
     fecha: new Date().toISOString().split('T')[0],
     plataforma: 'WhatsApp',
-    confirmada: false,
+    confirmada: true,
     cuotas: [],
   };
 
@@ -73,17 +74,25 @@ export class VentasFormComponent {
 
     this.ventasService.crearVenta(ventaFinal).subscribe({
       next: () => {
-        this.snackBar.open('Venta registrada con éxito', 'Cerrar', {
+        this.snackBar.openFromComponent(CustomSnackComponent, {
+          data: {
+            message: 'Venta registrada con éxito',
+            type: 'success'
+          },
           duration: 3000,
-          panelClass: ['bg-green-600', 'text-white'],
+          panelClass: ['custom-snack-container'],
         });
         this.dialogRef.close(true);
         this.resetFormulario();
       },
       error: (err) => {
-        this.snackBar.open(err.message, 'Cerrar', {
+        this.snackBar.openFromComponent(CustomSnackComponent, {
+          data: {
+            message: err.message,
+            type: 'error'
+          },
           duration: 4000,
-          panelClass: ['bg-red-600', 'text-white'],
+          panelClass: ['custom-snack-container'],
         });
       },
     });

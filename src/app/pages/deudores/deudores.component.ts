@@ -31,6 +31,11 @@ export class DeudoresComponent {
     });
   }
 
+  formatFecha(fecha: string): string {
+    const [year, month, day] = fecha.split('-');
+    return `${day}-${month}-${year}`;
+  }
+
   formatMonto(monto: number): string {
     return new Intl.NumberFormat('es-AR', {
       style: 'currency',

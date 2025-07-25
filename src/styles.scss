@@ -15,5 +15,12 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     .table-data {
       @apply px-4 py-2 text-sm text-gray-700 border-r-1 border-gray-200 max-w-[200px] overflow-hidden;
     };
+}
 
+
+/* estilo para el snackbar: quitar fondo gris, sombra y padding */
+.custom-snack-container .mdc-snackbar__surface {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
 }
