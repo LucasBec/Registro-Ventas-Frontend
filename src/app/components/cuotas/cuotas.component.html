@@ -1,4 +1,4 @@
-<div class="flex flex-col gap-2 p-4 max-h-[calc(100vh-100px)] overflow-y-auto">
+<div class="flex flex-col gap-2 p-8 max-h-[calc(100vh-100px)] overflow-y-auto">
   <h2 class="text-xl font-bold mb-4 text-center">Cuotas de la Venta #{{ venta.id }}</h2>
 
   <div *ngIf="cargando" class="text-center text-gray-500">
@@ -9,6 +9,9 @@
     No hay cuotas registradas para esta venta.
   </div>
 
+
+ <!-- FUNCION A IMPLEMENTAR -->
+
 <!--   <div class="flex justify-center">
     <button type="button" (click)="editarCuotas()"
       class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition cursor-pointer">
@@ -17,7 +20,7 @@
   </div> -->
 
   <div *ngIf="!cargando && cuotas.length > 0" class="space-y-2">
-    <div *ngFor="let c of cuotas" class="bg-gray-200 rounded p-3 flex items-center justify-center rounded-[30px]">
+    <div *ngFor="let c of cuotas" class="bg-gray-200 rounded p-3 flex items-center justify-center">
       <div class="flex flex-col gap-2">
         <p class="font-semibold">Cuota {{ c.numeroCuota }}</p>
         <p><strong>Monto:</strong> ${{ c.monto }}</p>
