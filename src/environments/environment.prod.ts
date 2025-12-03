@@ -1,4 +1,4 @@
 export const environment = {
     production: true,
-    apiUrl: 'https://srv907692.hstgr.cloud/api'
+    apiUrl: 'http://103.199.185.247:3001/api'
   };

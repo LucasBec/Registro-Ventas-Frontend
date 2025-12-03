@@ -8,6 +8,8 @@ import { IVenta } from '../../../models/venta.model';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
+import { CustomSnackComponent } from '../../../shared/custom-snack/custom-snack.component';
+
 @Component({
   selector: 'app-editar-venta-dialog',
   standalone: true,
@@ -53,9 +55,13 @@ export class EditarVentaDialogComponent {
     } else if (diferencia < 0) {
       const cuotasPagadas = cuotasOriginales.filter(c => c.pagada);
       if (this.cantidadCuotas < cuotasPagadas.length) {
-        this.snackBar.open('No se puede reducir por debajo de las cuotas ya pagadas', 'Cerrar', {
+        this.snackBar.openFromComponent(CustomSnackComponent, {
+          data: {
+            message: 'No se puede reducir por debajo de las cuotas ya pagadas',
+            type: 'warn'
+          },
           duration: 3000,
-          panelClass: ['bg-red-600', 'text-white']
+          panelClass: ['custom-snack-container']
         });
         this.cantidadCuotas = cuotasOriginales.length;
         return;

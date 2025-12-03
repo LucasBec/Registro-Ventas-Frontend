@@ -11,6 +11,7 @@ import { EditarVentaDialogComponent } from '../../components/ventas/editar-venta
 import { VentasFormComponent } from '../../components/ventas/ventas-form/ventas-form.component';
 import { LucideAngularModule, Edit, Trash2 } from 'lucide-angular';
 import { CuotasComponent } from '../../components/cuotas/cuotas.component';
+import { CustomSnackComponent } from '../../shared/custom-snack/custom-snack.component';
 
 @Component({
   selector: 'app-ventas-list',
@@ -92,40 +93,48 @@ export class VentasListComponent implements OnInit {
                   .actualizarCuotas(result.id!, cuotas)
                   .subscribe({
                     next: () => {
-                      this.snackBar.open(
-                        'Venta actualizada correctamente',
-                        'Cerrar',
-                        {
-                          duration: 3000,
-                        }
-                      );
+                      this.snackBar.openFromComponent(CustomSnackComponent, {
+                        data: {
+                          message: 'Venta actualizada correctamente',
+                          type: 'success'
+                        },
+                        duration: 3000,
+                        panelClass: ['custom-snack-container'],
+                      });
                       this.recargarVentas();
                     },
                     error: (err) => {
-                      this.snackBar.open(
-                        'Venta actualizada pero hubo error con las cuotas',
-                        'Cerrar',
-                        {
-                          duration: 3000,
-                        }
-                      );
+                      this.snackBar.openFromComponent(CustomSnackComponent, {
+                        data: {
+                          message: 'Venta actualizada pero hubo error con las cuotas',
+                          type: 'error'
+                        },
+                        duration: 3000,
+                        panelClass: ['custom-snack-container'],
+                      });
                       this.recargarVentas();
                     },
                   });
               } else {
-                this.snackBar.open(
-                  'Venta actualizada correctamente',
-                  'Cerrar',
-                  {
-                    duration: 3000,
-                  }
-                );
+                this.snackBar.openFromComponent(CustomSnackComponent, {
+                  data: {
+                    message: 'Venta actualizada correctamente',
+                    type: 'success'
+                  },
+                  duration: 3000,
+                  panelClass: ['custom-snack-container'],
+                });
                 this.recargarVentas();
               }
             },
             error: (err) => {
-              this.snackBar.open('Error al actualizar la venta', 'Cerrar', {
+              this.snackBar.openFromComponent(CustomSnackComponent, {
+                data: {
+                  message: 'Error al actualizar la venta',
+                  type: 'error'
+                },
                 duration: 3000,
+                panelClass: ['custom-snack-container'],
               });
             },
           });
@@ -159,14 +168,24 @@ export class VentasListComponent implements OnInit {
       if (result) {
         this.ventasService.eliminarVenta(id).subscribe({
           next: () => {
-            this.snackBar.open('Venta eliminada con éxito', 'Cerrar', {
+            this.snackBar.openFromComponent(CustomSnackComponent, {
+              data: {
+                message: 'Venta eliminada con éxito',
+                type: 'success'
+              },
               duration: 3000,
+              panelClass: ['custom-snack-container'],
             });
             this.recargarVentas();
           },
           error: (err) => {
-            this.snackBar.open('Error al eliminar la venta', 'Cerrar', {
+            this.snackBar.openFromComponent(CustomSnackComponent, {
+              data: {
+                message: 'Error al eliminar la venta',
+                type: 'error'
+              },
               duration: 3000,
+              panelClass: ['custom-snack-container'],
             });
           },
         });

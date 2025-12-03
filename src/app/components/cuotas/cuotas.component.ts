@@ -10,6 +10,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog.component';
+import { MatDialogRef } from '@angular/material/dialog';
+import { CustomSnackComponent } from '../../shared/custom-snack/custom-snack.component';
 
 @Component({
   selector: 'app-cuotas',
@@ -27,7 +29,8 @@ export class CuotasComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public venta: IVenta,
     private cuotasService: CuotasService,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private dialogRef: MatDialogRef<CuotasComponent>
   ) {}
 
   ngOnInit() {
@@ -38,9 +41,13 @@ export class CuotasComponent implements OnInit {
       },
       error: () => {
         this.cargando = false;
-        this.snackBar.open('Error al cargar las cuotas', 'Cerrar', {
+        this.snackBar.openFromComponent(CustomSnackComponent, {
+          data: {
+            message: 'Error al cargar las cuotas',
+            type: 'error',
+          },
           duration: 3000,
-          panelClass: ['bg-red-600', 'text-white'],
+          panelClass: ['custom-snack-container'],
         });
       },
     });
@@ -60,23 +67,24 @@ export class CuotasComponent implements OnInit {
 
   confirmarPago(cuota: ICuota) {
     // Validar que todas las cuotas anteriores estén pagadas
-    const cuotasAnteriores = this.cuotas
-      .filter(c => c.numeroCuota < cuota.numeroCuota);
-  
-    const hayImpagas = cuotasAnteriores.some(c => !c.pagada);
-  
+    const cuotasAnteriores = this.cuotas.filter(
+      (c) => c.numeroCuota < cuota.numeroCuota
+    );
+
+    const hayImpagas = cuotasAnteriores.some((c) => !c.pagada);
+
     if (hayImpagas) {
-      this.snackBar.open(
-        `No se puede confirmar la cuota #${cuota.numeroCuota} hasta que todas las anteriores estén pagadas.`,
-        'Cerrar',
-        {
-          duration: 4000,
-          panelClass: ['bg-yellow-700', 'text-white'],
-        }
-      );
+      this.snackBar.openFromComponent(CustomSnackComponent, {
+        data: {
+          message: `No se puede confirmar la cuota #${cuota.numeroCuota} hasta que todas las anteriores estén pagadas.`,
+          type: 'warn',
+        },
+        duration: 4000,
+        panelClass: ['custom-snack-container'],
+      });
       return;
     }
-  
+
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '300px',
       data: {
@@ -84,25 +92,29 @@ export class CuotasComponent implements OnInit {
         mensaje: '¿Estás seguro de que deseas confirmar el pago de esta cuota?',
       },
     });
-  
+
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.cuotasService.confirmPay(cuota.id!).subscribe({
           next: () => {
-            this.snackBar.open(
-              `Cuota #${cuota.numeroCuota} marcada como pagada`,
-              'Cerrar',
-              {
-                duration: 3000,
-                panelClass: ['bg-green-600', 'text-white'],
-              }
-            );
+            this.snackBar.openFromComponent(CustomSnackComponent, {
+              data: {
+                message: `Cuota #${cuota.numeroCuota} marcada como pagada`,
+                type: 'success',
+              },
+              duration: 3000,
+              panelClass: ['custom-snack-container'],
+            });
             cuota.pagada = true;
           },
           error: () => {
-            this.snackBar.open('Error al confirmar el pago', 'Cerrar', {
+            this.snackBar.openFromComponent(CustomSnackComponent, {
+              data: {
+                message: 'Error al confirmar el pago',
+                type: 'error',
+              },
               duration: 3000,
-              panelClass: ['bg-red-600', 'text-white'],
+              panelClass: ['custom-snack-container'],
             });
           },
         });
@@ -112,28 +124,36 @@ export class CuotasComponent implements OnInit {
 
   esConfirmable(cuota: ICuota): boolean {
     const cuotasAnteriores = this.cuotas.filter(
-      c => c.numeroCuota < cuota.numeroCuota
+      (c) => c.numeroCuota < cuota.numeroCuota
     );
-    return cuotasAnteriores.every(c => c.pagada);
+    return cuotasAnteriores.every((c) => c.pagada);
   }
 
   desconfirmarPago(cuota: ICuota) {
     if (!cuota.id) return;
-  
+
     this.cuotasService.unconfirmPay(cuota.id).subscribe({
       next: () => {
-        this.snackBar.open(`Cuota #${cuota.numeroCuota} desconfirmada`, 'Cerrar', {
+        this.snackBar.openFromComponent(CustomSnackComponent, {
+          data: {
+            message: `Cuota #${cuota.numeroCuota} desconfirmada`,
+            type: 'success',
+          },
           duration: 3000,
-          panelClass: ['bg-yellow-600', 'text-white']
+          panelClass: ['custom-snack-container'],
         });
         cuota.pagada = false;
       },
       error: () => {
-        this.snackBar.open('Error al desconfirmar la cuota', 'Cerrar', {
+        this.snackBar.openFromComponent(CustomSnackComponent, {
+          data: {
+            message: 'Error al desconfirmar la cuota',
+            type: 'error',
+          },
           duration: 3000,
-          panelClass: ['bg-red-600', 'text-white']
+          panelClass: ['custom-snack-container'],
         });
-      }
+      },
     });
   }
 
@@ -142,21 +162,42 @@ export class CuotasComponent implements OnInit {
   }
 
   actualizarFechaPago(cuota: ICuota) {
-    this.cuotasService.update(cuota.id!, {
-      fechaPago: cuota.fechaPago
-    }).subscribe({
-      next: () => {
-        this.snackBar.open(`Fecha de pago actualizada`, 'Cerrar', {
-          duration: 2500,
-          panelClass: ['bg-blue-600', 'text-white']
-        });
+    this.cuotasService
+      .update(cuota.id!, {
+        fechaPago: cuota.fechaPago,
+      })
+      .subscribe({
+        next: () => {
+          this.snackBar.openFromComponent(CustomSnackComponent, {
+            data: {
+              message: `Fecha de pago actualizada`,
+              type: 'success',
+            },
+            duration: 2500,
+            panelClass: ['custom-snack-container'],
+          });
+        },
+        error: () => {
+          this.snackBar.openFromComponent(CustomSnackComponent, {
+            data: {
+              message: 'Error al actualizar la fecha',
+              type: 'error',
+            },
+            duration: 3000,
+            panelClass: ['custom-snack-container'],
+          });
+        },
+      });
+  }
+
+  editarCuotas() {
+    this.snackBar.openFromComponent(CustomSnackComponent, {
+      data: {
+        message: 'Funcionalidad no implementada',
+        type: 'warn',
       },
-      error: () => {
-        this.snackBar.open('Error al actualizar la fecha', 'Cerrar', {
-          duration: 3000,
-          panelClass: ['bg-red-600', 'text-white']
-        });
-      }
+      duration: 3000,
+      panelClass: ['custom-snack-container'],
     });
   }
 
@@ -164,5 +205,9 @@ export class CuotasComponent implements OnInit {
     this.cuotasService.delete(id).subscribe(() => {
       this.cuotas = this.cuotas.filter((c) => c.id !== id);
     });
+  }
+
+  cerrar() {
+    this.dialogRef.close();
   }
 }
